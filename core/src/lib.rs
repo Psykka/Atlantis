@@ -1,6 +1,8 @@
 mod arm;
 pub mod bus;
 
+pub mod types;
+
 use crate::arm::arm7tdmi::CPU;
 use crate::bus::Bus;
 

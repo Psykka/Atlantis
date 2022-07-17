@@ -1,3 +1,4 @@
+use crate::types::Format;
 pub const ADDRES_BASE: u32 = 0x2000000;
 
 pub struct Bus {
@@ -11,19 +12,35 @@ impl Bus {
         }
     }
 
-    pub fn read_8(self, addr: u32) -> u8 {
+    pub fn read(self, addr: u32, size: Format) -> u64 {
+        match size {
+            Format::Byte => self.read_byte(addr) as u64,
+            Format::HalfWord => self.read_halfword(addr) as u64,
+            Format::Word => self.read_word(addr) as u64,
+        }
+    }
+
+    pub fn write(mut self, addr: u32, size: Format, data: u64) {
+        match size {
+            Format::Byte => self.write_byte(addr, data as u8),
+            Format::HalfWord => self.write_halfword(addr, data as u16),
+            Format::Word => self.write_word(addr, data as u32),
+        }
+    }
+
+    fn read_byte(self, addr: u32) -> u8 {
         let addr = addr - ADDRES_BASE;
         self.ewram[addr as usize]
     }
 
-    pub fn read_16(self, addr: u32) -> u16 {
+    fn read_halfword(self, addr: u32) -> u16 {
         let addr = (addr - ADDRES_BASE) as usize;
         let a = self.ewram[addr];
         let b = self.ewram[addr + 1];
         (a as u16) | ((b as u16) << 8)
     }
 
-    pub fn read_32(self, addr: u32) -> u32 {
+    fn read_word(self, addr: u32) -> u32 {
         let addr = (addr - ADDRES_BASE) as usize;
         let a = self.ewram[addr];
         let b = self.ewram[addr + 1];
@@ -32,18 +49,18 @@ impl Bus {
         (a as u32) | ((b as u32) << 8) | ((c as u32) << 16) | ((d as u32) << 24)
     }
     
-    pub fn write_8(&mut self, addr: u32, value: u8) {
+    fn write_byte(&mut self, addr: u32, value: u8) {
         let addr = addr - ADDRES_BASE;
         self.ewram[addr as usize] = value;
     }
 
-    pub fn write_16(&mut self, addr: u32, value: u16) {
+    fn write_halfword(&mut self, addr: u32, value: u16) {
         let addr = (addr - ADDRES_BASE) as usize;
         self.ewram[addr] = (value & 0xFF) as u8;
         self.ewram[addr + 1] = ((value >> 8) & 0xFF) as u8;
     }
 
-    pub fn write_32(&mut self, addr: u32, value: u32) {
+    fn write_word(&mut self, addr: u32, value: u32) {
         let addr = (addr - ADDRES_BASE) as usize;
         self.ewram[addr] = (value & 0xFF) as u8;
         self.ewram[addr + 1] = ((value >> 8) & 0xFF) as u8;

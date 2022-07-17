@@ -1,4 +1,4 @@
-use crate::bus::Bus;
+use crate::{bus::Bus, types::Format};
 
 pub struct CPU {
     // iwram: [u8; 1024 * 1024 * 32],
@@ -23,8 +23,8 @@ impl CPU {
         }
     }
 
-    fn fetch(self) -> u32 {
-        let opcode = self.bus.read_32(self.r[15]);
-        opcode
+    fn _fetch(self) -> u32 {
+        let opcode = self.bus.read(self.r[15], Format::Word);
+        opcode as u32
     }
 }
