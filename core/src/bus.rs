@@ -1,6 +1,7 @@
 use crate::types::Format;
 pub const ADDRES_BASE: u32 = 0x2000000;
 
+#[derive(Clone)]
 pub struct Bus {
     pub ewram: Box<[u8]>,
 }
@@ -12,18 +13,18 @@ impl Bus {
         }
     }
 
-    pub fn read(self, addr: u32, size: Format) -> u64 {
+    pub fn read(self, addr: u32, size: Format) -> u32 {
         match size {
-            Format::Byte => self.read_byte(addr) as u64,
-            Format::HalfWord => self.read_halfword(addr) as u64,
-            Format::Word => self.read_word(addr) as u64,
+            Format::Byte => self.read_byte(addr) as u32,
+            Format::Halfword => self.read_halfword(addr) as u32,
+            Format::Word => self.read_word(addr) as u32,
         }
     }
 
     pub fn write(mut self, addr: u32, size: Format, data: u64) {
         match size {
             Format::Byte => self.write_byte(addr, data as u8),
-            Format::HalfWord => self.write_halfword(addr, data as u16),
+            Format::Halfword => self.write_halfword(addr, data as u16),
             Format::Word => self.write_word(addr, data as u32),
         }
     }
@@ -68,4 +69,3 @@ impl Bus {
         self.ewram[addr + 3] = ((value >> 24) & 0xFF) as u8;
     }
 }
-

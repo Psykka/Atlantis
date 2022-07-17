@@ -2,7 +2,7 @@ use std::fmt::{Display, Formatter, Error};
 
 pub enum Format {
     Byte,
-    HalfWord,
+    Halfword,
     Word,
 }
 
@@ -10,7 +10,7 @@ impl Display for Format {
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
         match self {
             Format::Byte => write!(f, "Byte"),
-            Format::HalfWord => write!(f, "HalfWord"),
+            Format::Halfword => write!(f, "Halfword"),
             Format::Word => write!(f, "Word"),
         }
     }
