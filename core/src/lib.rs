@@ -3,7 +3,7 @@ pub mod bus;
 
 pub mod types;
 
-use crate::arm::arm7tdmi::CPU;
+use crate::arm::CPU;
 use crate::bus::Bus;
 
 pub struct Core {
@@ -15,6 +15,10 @@ impl Core {
         Self {
             arm: CPU::new(Bus::new())
         }
+    }
+
+    pub fn start(self) {
+        self.arm.run();
     }
 }
 

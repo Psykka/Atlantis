@@ -1,14 +1,6 @@
 use crate::{bus::Bus, types::Format};
 
-pub struct CPU {
-    // iwram: [u8; 1024 * 1024 * 32],
-    pub bus: Bus,
-    r: [u32; 16],
-    // R[13] (SP) is the stack pointer.
-    // R[14] (LR) is link register.
-    // R[15] (PC) is the program counter.
-    cprs: u32
-}
+use super::CPU;
 
 impl CPU {
     pub fn new(bus: Bus) -> Self {
@@ -16,15 +8,34 @@ impl CPU {
         r[15] = 0x2000000; // PC is set before BIOS.
 
         Self {
-            // iwram: [0; 1024 * 1024 * 32],
             bus,
             r,
             cprs: 0,
+            flags: 0,
         }
     }
 
-    fn _fetch(self) -> u32 {
-        let opcode = self.bus.read(self.r[15], Format::Word);
-        opcode as u32
+    pub fn fetch(&self) -> u32{
+        todo!()
+    }
+
+    pub fn decode(&self, inst: u32) -> u32 {
+        // data processing and FSR transfer instructions
+        todo!()
+    }
+
+    pub fn execute(&self, inst: u32) {
+        todo!()
+    }
+
+    pub fn run(&self) {
+        loop {
+            // Fetch instruction.
+            let inst = self.fetch();
+            // Decode instruction.
+            self.decode(inst);
+            // Execute instruction.
+            self.execute(inst);
+        }
     }
 }
