@@ -1,29 +1,27 @@
-mod arm;
-pub mod bus;
-
 pub mod types;
+pub mod bus;
+pub mod memory;
+pub mod arm;
+pub mod sharp;
 
-use crate::arm::CPU;
-use crate::bus::Bus;
+use sharp::cpu::SharpCpu;
 
 pub struct Core {
-    pub arm: CPU,
+    pub cpu: SharpCpu,
+}
+
+impl Default for Core {
+    fn default() -> Self {
+        Self {
+            cpu: SharpCpu::new(),
+        }
+    }
 }
 
 impl Core {
     pub fn new() -> Self {
         Self {
-            arm: CPU::new(Bus::new())
+            cpu: SharpCpu::new(),
         }
-    }
-
-    pub fn start(self) {
-        self.arm.run();
-    }
-}
-
-impl Default for Core {
-    fn default() -> Self {
-        Self::new()
     }
 }
