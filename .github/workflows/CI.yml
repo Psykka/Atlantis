@@ -23,6 +23,8 @@ jobs:
         with:
           toolchain: nightly
           profile: minimal
+          override: true
+          default: true
           components: rustfmt, clippy
 
       - name: Run cargo check
