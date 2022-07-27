@@ -28,15 +28,14 @@ impl Memory {
     }
 
     fn read_halfword(&self, addr: u32) -> Result<u16, ()> {
-        Ok((self.ram[addr as usize] as u16)
-        | ((self.ram[(addr + 1) as usize] as u16) << 8))
+        Ok((self.ram[addr as usize] as u16) | ((self.ram[(addr + 1) as usize] as u16) << 8))
     }
 
     fn read_word(&self, addr: u32) -> Result<u32, ()> {
         Ok((self.ram[addr as usize] as u32)
-        | ((self.ram[(addr + 1) as usize] as u32) << 8)
-        | ((self.ram[(addr + 2) as usize] as u32) << 16)
-        | ((self.ram[(addr + 3) as usize] as u32) << 24))
+            | ((self.ram[(addr + 1) as usize] as u32) << 8)
+            | ((self.ram[(addr + 2) as usize] as u32) << 16)
+            | ((self.ram[(addr + 3) as usize] as u32) << 24))
     }
 
     pub fn write(&mut self, addr: u32, size: Format, data: u32) {
