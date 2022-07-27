@@ -74,9 +74,9 @@ jobs:
     strategy:
       matrix:
         rust:
-          - { target: x86_64-apple-darwin, os: macos-latest, artifact: osx, output: Atlantis }
+          # - { target: x86_64-apple-darwin, os: macos-latest, artifact: osx, output: Atlantis }
           - { target: x86_64-unknown-linux-gnu, os: ubuntu-latest, artifact: linux-gnu, output: Atlantis }
-          - { target: x86_64-unknown-linux-musl, os: ubuntu-latest, artifact: linux-musl, output: Atlantis }
+          # - { target: x86_64-unknown-linux-musl, os: ubuntu-latest, artifact: linux-musl, output: Atlantis }
           - { target: x86_64-pc-windows-gnu, os: windows-latest, artifact: windows, output: Atlantis.exe }
     runs-on: ${{ matrix.rust.os }}
     steps:
@@ -104,19 +104,17 @@ jobs:
           command: build
           args: --release --target ${{ matrix.rust.target }}
 
-      - name: Generate sha256sum unix
-        if: ${{ matrix.rust.os }} != windows-latest
+      - name: Generate sha256sum
+        shell: bash
         run: |
           cd ./target/release
-          TARGET=${{ matrix.rust.output }}
-          echo ${{ hashFiles('./target/release/${TARGET}') }} > Atlantis-${{ matrix.rust.artifact }}-x86_64.sha256
-      
-      - name: Generate sha256sum windows
-        if: ${{ matrix.rust.os }} == windows-latest
-        run: |
-          cd ./target/release
-          $env:TARGET=${{ matrix.rust.output }}
-          $(certUtil -hashfile $env:TARGET SHA256)[1] -replace " ","" > Atlantis-${{ matrix.rust.artifact }}-x86_64.sha256
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            $env:TARGET=${{ matrix.rust.output }}
+            $(certUtil -hashfile $env:TARGET SHA256)[1] -replace " ","" > Atlantis-${{ matrix.rust.artifact }}-x86_64.sha256
+          else
+            TARGET=${{ matrix.rust.output }}
+            echo ${{ hashFiles('./target/release/${TARGET}') }} > Atlantis-${{ matrix.rust.artifact }}-x86_64.sha256
+          fi
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
