@@ -15,8 +15,9 @@ jobs:
         with:
           path: |
             ~/.cargo/registry
+            ~/.cargo/git
             ./target
-          key: cargo-cache
+          key: cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - uses: actions-rs/toolchain@v1
         with:
@@ -50,7 +51,7 @@ jobs:
         with:
           path: |
             ~/.cargo/registry
-            ~/.cargo/bin
+            ~/.cargo/git
             ./target
           key: cargo-cache
 
@@ -84,7 +85,7 @@ jobs:
         with:
           path: |
             ~/.cargo/registry
-            ~/.cargo/bin
+            ~/.cargo/git
             ./target
           key: cargo-cache
 
