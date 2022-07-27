@@ -94,6 +94,7 @@ jobs:
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
+          override: true
           target: ${{ matrix.rust.target }}
           profile: minimal
 
@@ -101,12 +102,14 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: build
-          args: --release
+          args: --release --target ${{ matrix.rust.target }}
 
       - name: Upload artifact
+        run: echo ${{ hashFiles('./target/${{ matrix.rust.output }}') }} > ./target/release/Atlantis-${{ matrix.rust.os }}-x86_64.sha256
         uses: actions/upload-artifact@v3
         with:
           name: Atlantis-${{ matrix.rust.os }}-x86_64
           path: |
             ./target/release/${{ matrix.rust.output }}
-            ${{ hashFiles('./target/${{ matrix.rust.output }}') }}
+            ./target/release/Atlantis-${{ matrix.rust.os }}-x86_64.sha256
+            
