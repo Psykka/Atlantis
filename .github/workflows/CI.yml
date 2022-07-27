@@ -74,7 +74,6 @@ jobs:
       - lint
       - test
     runs-on: ubuntu-latest
-    id: compile
     strategy:
       matrix:
         rust:
@@ -95,6 +94,7 @@ jobs:
           key: cargo-cache
 
       - name: Build app
+        id: compile
         uses: rust-build/rust-build.action@v1
         with:
           RUSTTARGET: ${{ matrix.rust.target }}
