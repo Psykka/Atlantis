@@ -107,20 +107,17 @@ jobs:
       - name: Generate sha256sum
         shell: bash
         run: |
-          cd ./target/release
-          if [ "$RUNNER_OS" == "Windows" ]; then
-            $env:TARGET=${{ matrix.rust.output }}
-            $(certUtil -hashfile $env:TARGET SHA256)[1] -replace " ","" > Atlantis-${{ matrix.rust.artifact }}-x86_64.sha256
-          else
-            TARGET=${{ matrix.rust.output }}
-            echo ${{ hashFiles('./target/release/${TARGET}') }} > Atlantis-${{ matrix.rust.artifact }}-x86_64.sha256
-          fi
+          TARGET=${{ matrix.rust.output }}
+          SHA256SUM=Atlantis-${{ matrix.rust.artifact }}-x86_64.sha256
+          echo "artifactPath=$(readlink -f ./target/release/${TARGET})" >> $GITHUB_ENV
+          echo ${{ hashFiles('${{ env.artifactPath }}') }} > SHA256SUM
+          echo "sha256sumPath=$(readlink -f ./target/release/${TARGET})" >> $GITHUB_ENV
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: Atlantis-${{ matrix.rust.artifact }}-x86_64
           path: |
-            ${{ matrix.rust.output }}
-            Atlantis-${{ matrix.rust.artifact }}-x86_64.sha256
+            ./target/release/${{ matrix.rust.output }}
+            ./target/release/Atlantis-${{ matrix.rust.artifact }}-x86_64.sha256
             
