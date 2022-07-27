@@ -75,10 +75,10 @@ jobs:
     strategy:
       matrix:
         rust:
-          - { target: x86_64-apple-darwin, os: osx }
-          - { target: x86_64-unknown-linux-gnu, os: linux-gnu }
-          - { target: x86_64-unknown-linux-musl, os: linux-musl }
-          - { target: x86_64-windows-msvc, os: windows }
+          - { target: x86_64-apple-darwin, os: osx, output: Atlantis }
+          - { target: x86_64-unknown-linux-gnu, os: linux-gnu, output: Atlantis }
+          - { target: x86_64-unknown-linux-musl, os: linux-musl, output: Atlantis }
+          - { target: x86_64-windows-msvc, os: windows, output: Atlantis.exe }
     steps:
       - uses: actions/checkout@v3
 
@@ -91,17 +91,21 @@ jobs:
             ./target
           key: cargo-cache
 
-      - name: Build app
-        id: compile
-        uses: rust-build/rust-build.action@v1.3.2
+      - uses: actions-rs/toolchain@v1
         with:
-          RUSTTARGET: ${{ matrix.rust.target }}
-          UPLOAD_MODE: none
+          toolchain: stable
+          target: ${{ matrix.rust.target }}
+          profile: minimal
+
+      - name: Build app
+        uses: actions-rs/cargo@v1
+        with:
+          command: build --release
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: Atlantis-${{ matrix.rust.os }}-x86_64
           path: |
-            ${{ steps.compile.outputs.BUILT_ARCHIVE }}
-            ${{ steps.compile.outputs.BUILT_CHECKSUM }}
+            ./target/release/${{ matrix.rust.output }}
+            ${{ hashFiles('./target/${{ matrix.rust.output }}') }}
