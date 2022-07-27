@@ -1,0 +1,109 @@
+name: CI
+
+on:
+  - push
+  - pull_request
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        toolchain:
+          - stable
+          - nightly
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Cargo cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/bin
+            ./target
+          key: cargo-cache
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: ${{ matrix.toolchain }}
+          profile: minimal
+          components: rustfmt, clippy
+
+      - name: Run cargo check
+        uses: actions-rs/cargo@v1
+        with:
+          cargo-args: check
+
+      - name: Run clippy
+        uses: actions-rs/cargo@v1
+        with:
+          cargo-args: clippy
+      
+      - name: Run cargo fmt
+        uses: actions-rs/cargo@v1
+        with:
+          cargo-args: +nightly fmt --all -- --check
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Cargo cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/bin
+            ./target
+          key: cargo-cache
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+
+      - name: Run cargo test
+        uses: actions-rs/cargo@v1
+        with:
+          cargo-args: test
+
+  build:
+    needs:
+      - lint
+      - test
+    runs-on: ubuntu-latest
+    id: compile
+    strategy:
+      matrix:
+        rust:
+          - { target: x86_64-apple-darwin, os: osx }
+          - { target: x86_64-unknown-linux-gnu, os: linux-gnu }
+          - { target: x86_64-unknown-linux-musl, os: linux-musl }
+          - { target: x86_64-windows-msvc, os: windows }
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Cargo cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/bin
+            ./target
+          key: cargo-cache
+
+      - name: Build app
+        uses: rust-build/rust-build.action@v1
+        with:
+          RUSTTARGET: ${{ matrix.rust.target }}
+          UPLOAD_MODE: none
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Atlantis-${{ matrix.rust.os }}-x86_64
+          path: |
+            ${{ steps.compile.outputs.BUILT_ARCHIVE }}
+            ${{ steps.compile.outputs.BUILT_CHECKSUM }}

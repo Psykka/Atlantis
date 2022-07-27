@@ -3,6 +3,11 @@ name = "app"
 version = "0.1.0"
 edition = "2021"
 
+[[bin]]
+name = "Atlantis"
+path = "./src/main.rs"
+out-dir = "bin"
+
 [dependencies]
 core = { path = "../core" }
 eframe = "0.18.0"
