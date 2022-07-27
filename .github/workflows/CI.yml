@@ -118,6 +118,6 @@ jobs:
         with:
           name: Atlantis-${{ matrix.rust.artifact }}-x86_64
           path: |
-            ./target/release/${{ matrix.rust.output }}
-            ./target/release/Atlantis-${{ matrix.rust.artifact }}-x86_64.sha256
+            ${{ env.artifactPath }}
+            ${{ env.sha256sumPath }}
             
