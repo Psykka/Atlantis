@@ -71,14 +71,14 @@ jobs:
     needs:
       - lint
       - test
-    runs-on: ubuntu-latest
     strategy:
       matrix:
         rust:
-          - { target: x86_64-apple-darwin, os: osx, output: Atlantis }
-          - { target: x86_64-unknown-linux-gnu, os: linux-gnu, output: Atlantis }
-          - { target: x86_64-unknown-linux-musl, os: linux-musl, output: Atlantis }
-          - { target: x86_64-pc-windows-msvc, os: windows, output: Atlantis.exe }
+          - { target: x86_64-apple-darwin, os: macos-latest, artifact: osx, output: Atlantis }
+          - { target: x86_64-unknown-linux-gnu, os: ubuntu-latest, artifact: linux-gnu, output: Atlantis }
+          - { target: x86_64-unknown-linux-musl, os: ubuntu-latest, artifact: linux-musl, output: Atlantis }
+          - { target: x86_64-pc-windows-gnu, os: windows-latest, artifact: windows, output: Atlantis.exe }
+    runs-on: ${{ matrix.rust.os }}
     steps:
       - uses: actions/checkout@v3
 
@@ -105,13 +105,13 @@ jobs:
           args: --release --target ${{ matrix.rust.target }}
 
       - name: Generate sha256sum
-        run: echo ${{ hashFiles('./target/${{ matrix.rust.output }}') }} > ./target/release/Atlantis-${{ matrix.rust.os }}-x86_64.sha256
-        
+        run: echo ${{ hashFiles('./target/release/${{ matrix.rust.output }}') }} > ./target/release/Atlantis-${{ matrix.rust.artifact }}-x86_64.sha256
+
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: Atlantis-${{ matrix.rust.os }}-x86_64
+          name: Atlantis-${{ matrix.rust.artifact }}-x86_64
           path: |
             ./target/release/${{ matrix.rust.output }}
-            ./target/release/Atlantis-${{ matrix.rust.os }}-x86_64.sha256
+            ./target/release/Atlantis-${{ matrix.rust.artifact }}-x86_64.sha256
             
