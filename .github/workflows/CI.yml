@@ -104,8 +104,10 @@ jobs:
           command: build
           args: --release --target ${{ matrix.rust.target }}
 
-      - name: Upload artifact
+      - name: Generate sha256sum
         run: echo ${{ hashFiles('./target/${{ matrix.rust.output }}') }} > ./target/release/Atlantis-${{ matrix.rust.os }}-x86_64.sha256
+        
+      - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: Atlantis-${{ matrix.rust.os }}-x86_64
