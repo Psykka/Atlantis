@@ -78,7 +78,7 @@ jobs:
           - { target: x86_64-apple-darwin, os: osx, output: Atlantis }
           - { target: x86_64-unknown-linux-gnu, os: linux-gnu, output: Atlantis }
           - { target: x86_64-unknown-linux-musl, os: linux-musl, output: Atlantis }
-          - { target: x86_64-windows-msvc, os: windows, output: Atlantis.exe }
+          - { target: x86_64-pc-windows-msvc, os: windows, output: Atlantis.exe }
     steps:
       - uses: actions/checkout@v3
 
