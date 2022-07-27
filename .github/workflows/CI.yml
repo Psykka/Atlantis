@@ -105,14 +105,14 @@ jobs:
           args: --release --target ${{ matrix.rust.target }}
 
       - name: Generate sha256sum unix
-        if: ${{ matrix.rust.os }} != 'windows-latest'
+        if: ${{ matrix.rust.os }} != windows-latest
         run: |
           cd ./target/release
           TARGET=${{ matrix.rust.output }}
           echo ${{ hashFiles('./target/release/${TARGET}') }} > Atlantis-${{ matrix.rust.artifact }}-x86_64.sha256
       
       - name: Generate sha256sum windows
-        if: ${{ matrix.rust.os }} == 'windows-latest'
+        if: ${{ matrix.rust.os }} == windows-latest
         run: |
           cd ./target/release
           $env:TARGET=${{ matrix.rust.output }}
