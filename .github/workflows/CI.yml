@@ -108,9 +108,9 @@ jobs:
         shell: bash
         run: |
           TARGET=${{ matrix.rust.output }}
-          SHA256SUM=Atlantis-${{ matrix.rust.artifact }}-x86_64.sha256
+          SHA256SUM=./target/release/Atlantis-${{ matrix.rust.artifact }}-x86_64.sha256
           echo "artifactPath=$(readlink -f ./target/release/${TARGET})" >> $GITHUB_ENV
-          echo ${{ hashFiles('${{ env.artifactPath }}') }} > SHA256SUM
+          sha256sum -b ${{ env.artifactPath }} | cut -d " " -f 1 > SHA256SUM
           echo "sha256sumPath=$(readlink -f ./target/release/${TARGET})" >> $GITHUB_ENV
 
       - name: Upload artifact
