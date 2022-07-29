@@ -1,0 +1,129 @@
+name: CI
+
+on:
+  - push
+  - pull_request
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Cargo cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ./target
+          key: cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          profile: minimal
+          override: true
+          default: true
+          components: rustfmt, clippy
+
+      - name: Run cargo check
+        uses: actions-rs/cargo@v1
+        with:
+          command: check
+
+      - name: Run clippy
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+      
+      - name: Run cargo fmt
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all -- --check
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Cargo cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ./target
+          key: cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+
+      - name: Run cargo test
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+
+  build:
+    needs:
+      - lint
+      - test
+    strategy:
+      fail-fast: false
+      matrix:
+        rust:
+          - { target: x86_64-apple-darwin, os: macos-latest, artifact: osx, output: Atlantis }
+          - { target: x86_64-unknown-linux-gnu, os: ubuntu-latest, artifact: linux-gnu, output: Atlantis }
+          - { target: x86_64-unknown-linux-musl, os: ubuntu-latest, artifact: linux-musl, output: Atlantis }
+          - { target: x86_64-pc-windows-gnu, os: windows-latest, artifact: windows, output: Atlantis.exe }
+    runs-on: ${{ matrix.rust.os }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Cargo cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ./target
+          key: cargo-${{ hashFiles('**/Cargo.lock') }}
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+          target: ${{ matrix.rust.target }}
+          profile: minimal
+
+      - name: Build app
+        uses: actions-rs/cargo@v1
+        with:
+          command: build
+          args: --release --target ${{ matrix.rust.target }}
+
+      - name: Generate artifact files
+        shell: bash
+        run: |
+          mkdir bin
+
+          TARGET=./target/${{ matrix.rust.target }}/release/${{ matrix.rust.output }}
+
+          if [ "${RUNNER_OS}" = "Windows" ]; then
+            sha256sum ${TARGET} | cut -d " " -f 1 > ./bin/${{ matrix.rust.output }}.sha256
+          else
+            shasum -a 256 -b ${TARGET} | cut -d " " -f 1 > ./bin/${{ matrix.rust.output }}.sha256
+          fi
+
+          cp ${TARGET} bin/
+
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Atlantis-${{ matrix.rust.artifact }}-x86_64
+          path: bin/
+            

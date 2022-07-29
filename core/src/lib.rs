@@ -1,8 +1,8 @@
-pub mod types;
+pub mod arm;
 pub mod bus;
 pub mod memory;
-pub mod arm;
 pub mod sharp;
+pub mod types;
 
 use sharp::cpu::SharpCpu;
 

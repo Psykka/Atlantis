@@ -1,7 +1,4 @@
-use crate::{
-    memory::Memory,
-    types::Format,
-};
+use crate::{memory::Memory, types::Format};
 
 pub struct Bus {
     pub ram: Memory,

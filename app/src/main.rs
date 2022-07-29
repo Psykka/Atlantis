@@ -1,5 +1,5 @@
-use eframe::{run_native, App, egui::CentralPanel, NativeOptions};
 use core::Core;
+use eframe::{egui::CentralPanel, run_native, App, NativeOptions};
 
 #[derive(Default)]
 struct GBA {
@@ -20,11 +20,18 @@ impl GBA {
     }
 
     fn get_ascii(&self, arr: &[u8]) -> String {
-        let build_string_vec: Vec<String> = arr.iter().map(|num| {
-            if *num >= 32 && *num <= 126 { (*num as char).to_string() }
-            else { '.'.to_string() }
-        }).collect();
-    
+        let build_string_vec: Vec<String> = arr
+            .iter()
+            .map(|num| {
+                if *num >= 32 && *num <= 126 {
+                    (*num as char).to_string()
+                }
+                else {
+                    '.'.to_string()
+                }
+            })
+            .collect();
+
         build_string_vec.join(" ")
     }
 
@@ -38,7 +45,7 @@ impl GBA {
 
         while i < arr.len() {
             let mut s = String::new();
-            let dump = &arr[i..i+buff];
+            let dump = &arr[i..i + buff];
             s.push_str(&format!("0x{:08x}: ", i));
             s.push_str(&self.get_hex(dump));
             s.push_str(&format!("  {}", self.get_ascii(dump)));
@@ -53,7 +60,9 @@ impl GBA {
 impl App for GBA {
     fn update(&mut self, ctx: &eframe::egui::Context, frame: &mut eframe::Frame) {
         CentralPanel::default().show(ctx, |ui| {
-            let arr = &[104, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 0, 0, 0, 0, 0];
+            let arr = &[
+                104, 101, 108, 108, 111, 32, 119, 111, 114, 108, 100, 0, 0, 0, 0, 0,
+            ];
             for line in self.hex_dump(arr, 8) {
                 ui.label(line);
             }

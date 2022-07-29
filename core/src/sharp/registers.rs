@@ -32,22 +32,10 @@ impl Registers {
 
     pub fn get(&self, reg: WordReg) -> u16 {
         match reg {
-            WordReg::AF => {
-                ((self.a as u16) << 8)
-                | (self.f as u16)
-            },
-            WordReg::BC => {
-                ((self.b as u16) << 8)
-                | (self.c as u16)
-            },
-            WordReg::DE => {
-                ((self.d as u16) << 8)
-                | (self.e as u16)
-            },
-            WordReg::HL => {
-                ((self.h as u16) << 8)
-                | (self.l as u16)
-            },
+            WordReg::AF => ((self.a as u16) << 8) | (self.f as u16),
+            WordReg::BC => ((self.b as u16) << 8) | (self.c as u16),
+            WordReg::DE => ((self.d as u16) << 8) | (self.e as u16),
+            WordReg::HL => ((self.h as u16) << 8) | (self.l as u16),
         }
     }
 
@@ -56,19 +44,19 @@ impl Registers {
             WordReg::AF => {
                 self.a = (value >> 8) as u8;
                 self.f = value as u8;
-            },
+            }
             WordReg::BC => {
                 self.b = (value >> 8) as u8;
                 self.c = value as u8;
-            },
+            }
             WordReg::DE => {
                 self.d = (value >> 8) as u8;
                 self.e = value as u8;
-            },
+            }
             WordReg::HL => {
                 self.h = (value >> 8) as u8;
                 self.l = value as u8;
-            },
+            }
         }
     }
 }

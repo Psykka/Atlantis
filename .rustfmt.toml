@@ -1,0 +1,8 @@
+binop_separator = "Front"
+blank_lines_lower_bound = 0
+blank_lines_upper_bound = 1
+brace_style = "PreferSameLine"
+combine_control_expr = false
+control_brace_style = "ClosingNextLine"
+enum_discrim_align_threshold = 20
+force_multiline_blocks = true
