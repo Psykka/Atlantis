@@ -104,20 +104,25 @@ jobs:
           command: build
           args: --release --target ${{ matrix.rust.target }}
 
-      - name: Generate sha256sum
+      - name: Generate artifact files
         shell: bash
         run: |
+          mkdir bin
+
           TARGET=${{ matrix.rust.output }}
           SHA256SUM=./target/release/Atlantis-${{ matrix.rust.artifact }}-x86_64.sha256
-          echo "artifactPath=$(readlink -f ./target/release/${TARGET})" >> $GITHUB_ENV
-          sha256sum -b ${{ env.artifactPath }} | cut -d " " -f 1 > SHA256SUM
+
+          echo "appPath=$(readlink -f ./target/release/${TARGET})" >> $GITHUB_ENV
+          sha256sum -b ${{ env.appPath }} | cut -d " " -f 1 > SHA256SUM
           echo "sha256sumPath=$(readlink -f ${SHA256SUM})" >> $GITHUB_ENV
+
+          cp ${{ env.appPath }} bin/
+          cp ${{ env.sha256sumPath }} bin/
+
 
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
           name: Atlantis-${{ matrix.rust.artifact }}-x86_64
-          path: |
-            ${{ env.artifactPath }}
-            ${{ env.sha256sumPath }}
+          path: bin/
             
