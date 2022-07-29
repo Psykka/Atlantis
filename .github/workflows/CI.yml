@@ -112,7 +112,7 @@ jobs:
 
           TARGET=./target/${{ matrix.rust.target }}/release/${{ matrix.rust.output }}
 
-          if [ "${{ env.RUNNER_OS }}" == "Windows"]; then
+          if [ "${RUNNER_OS}" = "Windows" ]; then
             sha256sum ${TARGET} | cut -d " " -f 1 > ./bin/${{ matrix.rust.output }}.sha256
           else
             shasum -a 256 -b ${TARGET} | cut -d " " -f 1 > ./bin/${{ matrix.rust.output }}.sha256
