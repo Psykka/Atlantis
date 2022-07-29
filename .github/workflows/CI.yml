@@ -55,7 +55,7 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             ./target
-          key: cargo-cache
+          key: cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - uses: actions-rs/toolchain@v1
         with:
@@ -77,7 +77,7 @@ jobs:
           # - { target: x86_64-apple-darwin, os: macos-latest, artifact: osx, output: Atlantis }
           - { target: x86_64-unknown-linux-gnu, os: ubuntu-latest, artifact: linux-gnu, output: Atlantis }
           # - { target: x86_64-unknown-linux-musl, os: ubuntu-latest, artifact: linux-musl, output: Atlantis }
-          - { target: x86_64-pc-windows-gnu, os: windows-latest, artifact: windows, output: Atlantis.exe }
+          # - { target: x86_64-pc-windows-gnu, os: windows-latest, artifact: windows, output: Atlantis.exe }
     runs-on: ${{ matrix.rust.os }}
     steps:
       - uses: actions/checkout@v3
@@ -89,7 +89,7 @@ jobs:
             ~/.cargo/registry
             ~/.cargo/git
             ./target
-          key: cargo-cache
+          key: cargo-${{ hashFiles('**/Cargo.lock') }}
 
       - uses: actions-rs/toolchain@v1
         with:
@@ -108,6 +108,11 @@ jobs:
         shell: bash
         run: |
           mkdir bin
+
+          
+          ls
+          ls target/release
+          find -type f -executable -exec file -i '{}' \;
 
           TARGET=target/release/${{ matrix.rust.output }}
           SHA256SUM=target/release/${{ matrix.rust.output }}.sha256
