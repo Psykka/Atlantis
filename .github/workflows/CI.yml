@@ -110,7 +110,7 @@ jobs:
           mkdir bin
 
           TARGET=./target/${{ matrix.rust.target }}/release/${{ matrix.rust.output }}
-          sha256sum -b ${TARGET} | cut -d " " -f 1 > ./bin/${{ matrix.rust.output }}.sha256
+          shasum -a 256 -b ${TARGET} | cut -d " " -f 1 > ./bin/${{ matrix.rust.output }}.sha256
 
           cp ${TARGET} bin/
 
