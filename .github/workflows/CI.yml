@@ -109,13 +109,10 @@ jobs:
         run: |
           mkdir bin
 
-          
-          ls
-          ls target/release
           find -type f -executable -exec file -i '{}' \;
 
-          TARGET=target/release/${{ matrix.rust.output }}
-          SHA256SUM=target/release/${{ matrix.rust.output }}.sha256
+          TARGET=target/${{ matrix.rust.target }}/release/${{ matrix.rust.output }}
+          SHA256SUM=target/${{ matrix.rust.target }}/release/${{ matrix.rust.output }}.sha256
 
           sha256sum -b ${TARGET} | cut -d " " -f 1 > SHA256SUM
 
