@@ -68,6 +68,7 @@ jobs:
           command: test
 
   build:
+    if: github.ref == 'refs/heads/main' && github.eventname == 'push'
     needs:
       - lint
       - test
