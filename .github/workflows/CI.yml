@@ -74,10 +74,10 @@ jobs:
     strategy:
       matrix:
         rust:
-          # - { target: x86_64-apple-darwin, os: macos-latest, artifact: osx, output: Atlantis }
+          - { target: x86_64-apple-darwin, os: macos-latest, artifact: osx, output: Atlantis }
           - { target: x86_64-unknown-linux-gnu, os: ubuntu-latest, artifact: linux-gnu, output: Atlantis }
-          # - { target: x86_64-unknown-linux-musl, os: ubuntu-latest, artifact: linux-musl, output: Atlantis }
-          # - { target: x86_64-pc-windows-gnu, os: windows-latest, artifact: windows, output: Atlantis.exe }
+          - { target: x86_64-unknown-linux-musl, os: ubuntu-latest, artifact: linux-musl, output: Atlantis }
+          - { target: x86_64-pc-windows-gnu, os: windows-latest, artifact: windows, output: Atlantis.exe }
     runs-on: ${{ matrix.rust.os }}
     steps:
       - uses: actions/checkout@v3
@@ -109,13 +109,8 @@ jobs:
         run: |
           mkdir bin
 
-          find -type f -executable -exec file -i '{}' \;
-
           TARGET=./target/${{ matrix.rust.target }}/release/${{ matrix.rust.output }}
-
-          sha256sum -b ${TARGET} | cut -d " " -f 1 > bin/${{ matrix.rust.output }}.sha256
-
-          ls ./target/${{ matrix.rust.target }}/release/
+          sha256sum -b ${TARGET} | cut -d " " -f 1 > ./bin/${{ matrix.rust.output }}.sha256
 
           cp ${TARGET} bin/
 
