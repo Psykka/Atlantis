@@ -72,6 +72,7 @@ jobs:
       - lint
       - test
     strategy:
+      fail-fast: false
       matrix:
         rust:
           - { target: x86_64-apple-darwin, os: macos-latest, artifact: osx, output: Atlantis }
@@ -110,7 +111,12 @@ jobs:
           mkdir bin
 
           TARGET=./target/${{ matrix.rust.target }}/release/${{ matrix.rust.output }}
-          shasum -a 256 -b ${TARGET} | cut -d " " -f 1 > ./bin/${{ matrix.rust.output }}.sha256
+
+          if [ "${{ env.RUNNER_OS }}" == "Windows"]; then
+            sha256sum ${TARGET} | cut -d " " -f 1 > ./bin/${{ matrix.rust.output }}.sha256
+          else
+            shasum -a 256 -b ${TARGET} | cut -d " " -f 1 > ./bin/${{ matrix.rust.output }}.sha256
+          fi
 
           cp ${TARGET} bin/
 
