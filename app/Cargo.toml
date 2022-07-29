@@ -6,7 +6,6 @@ edition = "2021"
 [[bin]]
 name = "Atlantis"
 path = "./src/main.rs"
-out-dir = "bin"
 
 [dependencies]
 core = { path = "../core" }
