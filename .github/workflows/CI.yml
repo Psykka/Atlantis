@@ -109,8 +109,8 @@ jobs:
         run: |
           mkdir bin
 
-          TARGET=./target/release/${{ matrix.rust.output }}
-          SHA256SUM=./target/release/Atlantis-${{ matrix.rust.artifact }}-x86_64.sha256
+          TARGET=target/release/${{ matrix.rust.output }}
+          SHA256SUM=target/release/${{ matrix.rust.output }}.sha256
 
           sha256sum -b ${TARGET} | cut -d " " -f 1 > SHA256SUM
 
