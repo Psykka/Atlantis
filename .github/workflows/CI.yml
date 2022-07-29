@@ -109,15 +109,13 @@ jobs:
         run: |
           mkdir bin
 
-          TARGET=${{ matrix.rust.output }}
+          TARGET=./target/release/${{ matrix.rust.output }}
           SHA256SUM=./target/release/Atlantis-${{ matrix.rust.artifact }}-x86_64.sha256
 
-          echo "appPath=$(readlink -f ./target/release/${TARGET})" >> $GITHUB_ENV
-          sha256sum -b ${{ env.appPath }} | cut -d " " -f 1 > SHA256SUM
-          echo "sha256sumPath=$(readlink -f ${SHA256SUM})" >> $GITHUB_ENV
+          sha256sum -b ${TARGET} | cut -d " " -f 1 > SHA256SUM
 
-          cp ${{ env.appPath }} bin/
-          cp ${{ env.sha256sumPath }} bin/
+          cp ${TARGET} bin/
+          cp ${SHA256SUM} bin/
 
 
       - name: Upload artifact
