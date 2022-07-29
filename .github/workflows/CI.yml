@@ -112,14 +112,12 @@ jobs:
           find -type f -executable -exec file -i '{}' \;
 
           TARGET=./target/${{ matrix.rust.target }}/release/${{ matrix.rust.output }}
-          SHA256SUM=./target/${{ matrix.rust.target }}/release/${{ matrix.rust.output }}.sha256
 
-          sha256sum -b ${TARGET} | cut -d " " -f 1 > SHA256SUM
+          sha256sum -b ${TARGET} | cut -d " " -f 1 > bin/${{ matrix.rust.output }}.sha256
 
           ls ./target/${{ matrix.rust.target }}/release/
 
           cp ${TARGET} bin/
-          cp ${SHA256SUM} bin/
 
 
       - name: Upload artifact
